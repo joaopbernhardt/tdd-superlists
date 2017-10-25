@@ -2,7 +2,7 @@ from django.test import TestCase
 from lists.forms import ItemForm, EMPTY_ITEM_ERROR
 
 class ItemFormTest(TestCase):
-    def test_form_render_item_text_input(self):
+    def test_form_render_text_input(self):
         form = ItemForm()
         self.assertIn('placeholder="Enter a To-do item"',
             form.as_p())
