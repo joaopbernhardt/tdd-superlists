@@ -2,4 +2,3 @@ db.sqlite3
 geckodriver.log
 __pycache__
 *.pyc
-jquery-3.2.1.js
