@@ -24,6 +24,7 @@ eg, on Ubuntu:
 * see gunicorn-systemd.template.service
 * replace SITENAME with, e.g., staging.my-domain.com
 * replace USER with ubuntu username, e.g., username
+* replace PASSWORD with your email password (for server use)
 
 ## Folder structure:
 Assume we have a user account at /home/USER
