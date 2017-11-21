@@ -34,7 +34,7 @@ class ListPage(object):
             '.list-sharee'
             )
 
-    def get_shared_with(self, email):
+    def share_list_with(self, email):
         self.get_share_box().send_keys(email)
         self.get_share_box().send_keys(Keys.ENTER)
         self.test.wait_for(lambda: self.test.assertIn(

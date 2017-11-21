@@ -179,3 +179,48 @@ class MyListsTest(TestCase):
         correct_user = User.objects.create(email='a@b.com')
         response = self.client.get('/lists/users/a@b.com/')
         self.assertEqual(response.context['owner'], correct_user)
+
+    def test_my_lists_displays_shared_with_me_lists(self):
+        user = User.objects.create(email='a@b.com')
+        list_ = List.objects.create()
+        Item.objects.create(text='item 1', list=list_)
+        list_.shared_with.add(user)
+        response = self.client.get('/lists/users/a@b.com/')
+        self.assertContains(response, list_.name)
+
+    def test_shared_with_me_lists_displays_owners_email(self):
+        user = User.objects.create(email='a@b.com')
+        owner = User.objects.create(email='owner@b.com')
+        list_ = List.objects.create(owner=owner)
+        Item.objects.create(text='item 1', list=list_)
+        list_.shared_with.add(user)
+        response = self.client.get('/lists/users/a@b.com/')
+        self.assertContains(response, list_.owner.pk)
+
+class ShareListTest(TestCase):
+
+    def test_post_redirects_to_list_page(self):
+        self.client.post('/lists/new', data={
+            'text': 'item 1'
+            })
+        response = self.client.post('/lists/1/share', data={
+            'sharee': 'a@b.com'
+            })
+        self.assertRedirects(response, '/lists/1/')
+
+    def test_when_user_shares_list_email_is_added_to_shared_with(self):
+        sharee = User.objects.create(email='a@b.com')
+        list_ = List.objects.create()
+        self.client.post(f'/lists/{list_.id}/share', data={
+            'sharee': f'{sharee.pk}'
+            })
+        self.assertIn(sharee, list_.shared_with.all())
+
+    def test_if_list_has_sharees_they_are_displayed(self):
+        sharee = User.objects.create(email='a@b.com')
+        list_ = List.objects.create()
+        self.client.post(f'/lists/{list_.id}/share', data={
+            'sharee': f'{sharee.pk}'
+            })
+        response = self.client.get(f'/lists/{list_.id}/')
+        self.assertContains(response, sharee.pk)
